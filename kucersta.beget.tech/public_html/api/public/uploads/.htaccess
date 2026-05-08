@@ -1,0 +1,30 @@
+# Безопасность папки загрузок:
+# 1) Запрещаем выполнение любых скриптов в /uploads/ — даже если кто-то
+#    подсунет вредоносный .php/.phtml/.phar, он будет отдаваться как plain.
+# 2) Разрешаем прямой доступ ко всем картинкам и PDF.
+
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+<FilesMatch "\.(php|php3|php4|php5|php7|phtml|phar|pl|py|cgi|sh)$">
+    Require all denied
+</FilesMatch>
+
+# Корректные MIME-типы (на случай если на хостинге не подхватились по умолчанию)
+AddType image/jpeg .jpg .jpeg
+AddType image/png .png
+AddType image/webp .webp
+AddType application/pdf .pdf
+
+# Браузерное кеширование загруженных ассетов на 30 дней
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png  "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType application/pdf "access plus 7 days"
+</IfModule>
+
+# Запрещаем листинг директории
+Options -Indexes
